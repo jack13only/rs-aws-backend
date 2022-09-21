@@ -1,6 +1,6 @@
 import { products } from "../products/products.js";
 
-export const getProducts = async (event) => {
+export const getProducts = async () => {
   return {
     statusCode: 200,
     headers: {
