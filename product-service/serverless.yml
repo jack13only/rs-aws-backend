@@ -8,6 +8,21 @@ provider:
   region: eu-west-1
   stage: dev
 
+plugins:
+  - serverless-auto-swagger
+  - serverless-webpack
+
+custom:
+  autoswagger:
+    host: 'ii9uroeza2.execute-api.eu-west-1.amazonaws.com/dev'
+    typefiles: []
+    generateSwaggerOnDeploy: false
+  webpack:
+    webpackConfig: './webpack.config.js'
+    includeModules: true
+    packager: 'npm'
+    excludeFiles: ["**/*.test.js", "*.d.js", "*.py"]
+
 functions:
   getProductsList:
     handler: handler.getProductsList    	

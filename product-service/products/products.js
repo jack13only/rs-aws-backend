@@ -3,18 +3,18 @@ export const products = [
     count: 3,
     description: "Super plane",
     id: "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
-    price: 30,
+    price: 33,
     title: "Plane"
   },
   {
     count: 6,
     description: "Yellow color",
     id: "7567ec4b-b10c-48c5-9345-fc73c48a80a0",
-    price: 20,
+    price: 21,
     title: "Helicopter"
   },
   {
-    count: 17,
+    count: 2,
     description: "For droneracing and freestyle",
     id: "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
     price: 3,
