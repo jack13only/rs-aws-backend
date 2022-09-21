@@ -1,8 +1,8 @@
-import { getProducts } from "./getProducts.js";
+import { getProductsList } from "./getProductsList.js";
 import { products } from "../products/products.js"
 
 test('get products', async () => {
-  const receivedProducts = await getProducts()
+  const receivedProducts = await getProductsList()
 
   expect(receivedProducts).toStrictEqual(
     {
