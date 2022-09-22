@@ -1,37 +1,37 @@
 export const products = [
   {
     count: 3,
-    description: "Super plane",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+    description: "Toy Rick",
+    id: "rim1",
     price: 33,
-    title: "Plane"
+    title: "Rick"
   },
   {
     count: 6,
-    description: "Yellow color",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a0",
+    description: "Toy Morty Smith",
+    id: "rim2",
     price: 21,
-    title: "Helicopter"
+    title: "Morty"
   },
   {
     count: 2,
-    description: "For droneracing and freestyle",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
-    price: 3,
-    title: "Drone"
+    description: "Toy Summer Smith",
+    id: "rim3",
+    price: 15,
+    title: "Summer"
   },
   {
     count: 12,
-    description: "Has 4 wheels",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
+    description: "Toy Beth Smith",
+    id: "rim4",
     price: 12,
-    title: "Car"
+    title: "Beth"
   },
   {
     count: 7,
-    description: "Slow but cheap",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a3",
+    description: "Toy Jerry Smith",
+    id: "rim5",
     price: 1,
-    title: "Bike"
+    title: "Jerry"
   }
 ]
