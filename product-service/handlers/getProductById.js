@@ -10,7 +10,7 @@ export const getProductById = async (event) => {
 
     const { pathParameters } = event
     const { productId } = pathParameters
-    console.log(productId)
+    console.log('getProductById lambda with ', productId)
 
     const dynamo = new AWS.DynamoDB.DocumentClient()
 

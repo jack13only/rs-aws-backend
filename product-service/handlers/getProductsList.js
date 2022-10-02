@@ -5,6 +5,8 @@ import { findCount } from '../helpers/functions.js'
 import { headers } from '../helpers/headers.js'
 
 export const getProductsList = async () => {
+  console.log('getProductsList lambda')
+
   let products = []
 
   try {

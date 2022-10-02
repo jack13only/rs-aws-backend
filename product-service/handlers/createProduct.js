@@ -6,7 +6,7 @@ import { validateData, createNewProduct } from '../helpers/functions.js'
 
 export const createProduct = async (event) => {
   const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
-  console.log(body)
+  console.log('getProductById lambda with ', body)
   
   if (!validateData(body)) {
     return {
