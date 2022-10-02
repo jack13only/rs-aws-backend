@@ -6,9 +6,16 @@ import { validateData, createNewProduct } from '../helpers/functions.js'
 
 export const createProduct = async (event) => {
   const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
-  if (!validateData(body)) throw {
-    customStatusCode: 400,
-    message: 'Product data is invalid'
+  console.log(body)
+  
+  if (!validateData(body)) {
+    return {
+      statusCode: 400,
+      headers,
+      body: JSON.stringify({
+        message: 'Product data is invalid'
+      }),
+    }
   }
 
   const {newProductForSale, newProductStock} = createNewProduct(body)
@@ -27,7 +34,7 @@ export const createProduct = async (event) => {
     }).promise()
   } catch(err) {
     return {
-      statusCode: err.customStatusCode || 500,
+      statusCode: 500,
       headers,
       body: JSON.stringify({
         message: err.message

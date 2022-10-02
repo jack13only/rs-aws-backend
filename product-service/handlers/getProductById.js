@@ -4,13 +4,14 @@ import AWS from 'aws-sdk';
 import { headers } from '../helpers/headers.js'
 
 export const getProductById = async (event) => {
-
-  const { pathParameters } = event
-  const { productId } = pathParameters
-
   let product
 
   try {
+
+    const { pathParameters } = event
+    const { productId } = pathParameters
+    console.log(productId)
+
     const dynamo = new AWS.DynamoDB.DocumentClient()
 
     const productForSale = await dynamo.query({

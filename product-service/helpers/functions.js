@@ -13,6 +13,7 @@ export const validateData = (object) => {
   object.title.trim().length &&
   typeof object.price === 'number' &&
   object.price >= 0 &&
+  object.price < 1000 &&
   typeof object.count === 'number' &&
   object.count >= 0 ) {
     return true 
