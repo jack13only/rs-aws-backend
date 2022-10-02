@@ -9,7 +9,7 @@ module.exports = {
     "/products": {
       "get": {
         "summary": "getProductsList",
-        "description": "get array of products",
+        "description": "Get array of products",
         "operationId": "getProductsList.get.products",
         "consumes": [
           "application/json"
@@ -20,7 +20,7 @@ module.exports = {
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Products received",
+            "description": "Array of products"
           }
         }
       }
@@ -28,7 +28,7 @@ module.exports = {
     "/products/{productId}": {
       "get": {
         "summary": "getProductById",
-        "description": "get product by id",
+        "description": "Get product by id",
         "operationId": "getProductById.get.products/{productId}",
         "consumes": [
           "application/json"
@@ -46,7 +46,7 @@ module.exports = {
         ],
         "responses": {
           "200": {
-            "description": "Product received by ID",
+            "description": "Product by ID",
           },
           "404": {
             "description": "Product not found"

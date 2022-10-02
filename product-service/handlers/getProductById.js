@@ -1,15 +1,43 @@
-import { products } from "../products/products.js";
+import * as dotenv from 'dotenv'
+dotenv.config()
+import AWS from 'aws-sdk';
+import { headers } from '../helpers/headers.js'
 
 export const getProductById = async (event) => {
 
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': true,
-  }
-
   const { pathParameters } = event
   const { productId } = pathParameters
-  const product = products.find((item) => item.id === productId)
+
+  let product
+
+  try {
+    const dynamo = new AWS.DynamoDB.DocumentClient()
+
+    const productForSale = await dynamo.query({
+      TableName: process.env.PRODUCTS_TABLENAME,
+      KeyConditionExpression: 'id = :id',
+      ExpressionAttributeValues: {':id': productId }
+    }).promise()
+
+    const productStock = await dynamo.query({
+      TableName: process.env.STOCKS_TABLENAME,
+      KeyConditionExpression: 'product_id = :product_id',
+      ExpressionAttributeValues: {':product_id': productId }
+    }).promise()
+
+    if (productForSale?.Items?.[0] && productStock?.Items?.[0]) {
+      product = { ...productForSale.Items[0], count: productStock.Items[0].count }
+    }   
+
+  } catch(err) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        message: err.message
+      }),
+    }
+  }
 
   if (!product) {
     return {

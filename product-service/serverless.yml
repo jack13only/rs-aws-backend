@@ -1,12 +1,43 @@
 service: product-service
 
 frameworkVersion: '3'
+	
+useDotenv: true
 
 provider:
   name: aws
   runtime: nodejs16.x
   region: eu-west-1
   stage: dev
+  environment:
+    PRODUCTS_TABLENAME: ${env:PRODUCTS_TABLENAME}
+    STOCKS_TABLENAME: ${env:STOCKS_TABLENAME}
+    MY_NAMESPACE: ${env:MY_NAMESPACE}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem
+      Resource:
+        Fn::GetAtt:
+         - productsTable
+         - Arn
+    - Effect: "Allow"
+      Action:
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem
+      Resource:
+        Fn::GetAtt:
+         - stocksTable
+         - Arn
 
 plugins:
   - serverless-auto-swagger
@@ -38,3 +69,37 @@ functions:
           path: products/{productId}
           method: get
           cors: true
+  createProduct:
+    handler: handler.createProduct    	
+    events:
+      - http:
+          path: products
+          method: post
+          cors: true
+
+resources: 
+  Resources:
+    productsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:PRODUCTS_TABLENAME}
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+
+    stocksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:STOCKS_TABLENAME}
+        KeySchema:
+          - AttributeName: product_id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: product_id
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+
