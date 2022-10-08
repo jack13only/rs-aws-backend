@@ -1,0 +1,61 @@
+service: import-service
+
+frameworkVersion: '3'
+	
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: eu-west-1
+  stage: dev
+  environment:
+    REGION: ${env:REGION}
+    BUCKET: ${env:BUCKET}
+  iamRoleStatements: 
+    - Effect: Allow
+      Action: s3:ListBucket
+      Resource:
+        - arn:aws:s3:::${env:BUCKET}
+    - Effect: Allow
+      Action: s3:*
+      Resource:
+        - arn:aws:s3:::${env:BUCKET}/*
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: './webpack.config.js'
+    includeModules: true
+    packager: 'npm'
+    excludeFiles: ["**/*.test.js", "*.d.js", "*.py"]
+
+resources:
+  Resources:
+    WebAppS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env:BUCKET}
+        AccessControl: PublicReadWrite
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+              - "*"
+              AllowedMethods:
+              - GET
+              - POST
+              - HEAD
+              - PUT
+              AllowedOrigins:
+              - "*"
+
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          cors: true
