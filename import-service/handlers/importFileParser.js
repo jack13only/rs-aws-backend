@@ -5,7 +5,7 @@ import AWS from 'aws-sdk';
 import csv from 'csv-parser'
 
 export const importFileParser = async () => {
-  console.log(`importFileParser`)
+  console.log(`--- ImportFileParser started ---`)
   let files;
   const results = [];
   try {
@@ -23,6 +23,9 @@ export const importFileParser = async () => {
 
     if (files.Contents.length) {
       const readFile = (file) => new Promise((resolve, reject) => {
+        
+        console.log(`--- read file ${file.Key} ---`)
+
         const paramsGet = {
           Bucket: BUCKET,
           Key: file.Key,
@@ -34,6 +37,10 @@ export const importFileParser = async () => {
           .pipe(csv())
           .on('data', (data) => results.push(data))
           .on('end', async () => {
+
+            console.log(`--- File content ---`)
+            console.log(results)
+
             await s3.copyObject({
               Bucket: BUCKET,
               CopySource: BUCKET + '/' + file.Key,
@@ -44,6 +51,7 @@ export const importFileParser = async () => {
               Bucket: BUCKET,
               Key: file.Key,
             }).promise()
+            console.log(`--- Move file ${file.Key} from uploaded to parsed ---`)
             resolve()
           });
         })
@@ -55,7 +63,6 @@ export const importFileParser = async () => {
       }
   
       await readFiles(files.Contents);
-      console.log(results)
     }
   } catch (err) {
     return {
