@@ -59,3 +59,10 @@ functions:
           path: import
           method: get
           cors: true
+  importFileParser:
+    handler: handler.importFileParser
+    events:
+      - http:
+          path: import
+          method: get
+          cors: true

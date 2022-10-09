@@ -11,8 +11,9 @@ export const importProductsFile = async (event) => {
     const { queryStringParameters } = event
     const { name } = queryStringParameters
     const path = `uploaded/${name}`
+    
     const s3 = new AWS.S3({ region: REGION })
-    let status = 200
+
     const params = {
       Bucket: BUCKET,
       Key: path,
