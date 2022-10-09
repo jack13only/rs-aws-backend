@@ -62,7 +62,9 @@ functions:
   importFileParser:
     handler: handler.importFileParser
     events:
-      - http:
-          path: import
-          method: get
-          cors: true
+      - s3:
+          bucket: ${env:BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
