@@ -6,7 +6,7 @@ import csv from 'csv-parser'
 
 export const importFileParser = async () => {
   console.log(`--- ImportFileParser started ---`)
-  let files;
+  
   const results = [];
   try {
     const { REGION, BUCKET } = process.env
@@ -19,7 +19,7 @@ export const importFileParser = async () => {
       Delimiter: '/',
     }
 
-    files = await s3.listObjectsV2(paramsList).promise()
+    let files = await s3.listObjectsV2(paramsList).promise()
 
     if (files.Contents.length) {
       const readFile = (file) => new Promise((resolve, reject) => {
