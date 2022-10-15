@@ -9,8 +9,9 @@ export const importFileParser = async () => {
   
   const results = [];
   try {
-    const { REGION, BUCKET } = process.env
+    const { REGION, BUCKET, SQS_URL } = process.env
 
+    const sqs = new AWS.SQS();
     const s3 = new AWS.S3({ region: REGION })
 
     const paramsList = {
@@ -35,11 +36,22 @@ export const importFileParser = async () => {
           .getObject(paramsGet)
           .createReadStream()
           .pipe(csv())
-          .on('data', (data) => results.push(data))
+          .on('data', (product) => results.push(product))
+          // .on('data', (product) => sqs.sendMessage({
+          //     QueueUrl: SQS_URL,
+          //     MessageBody: JSON.stringify(product)
+          //   }, () => {
+          //     console.log(JSON.stringify(product))
+          //   }))
           .on('end', async () => {
 
-            console.log(`--- File content ---`)
-            console.log(results)
+          await sqs.sendMessageBatch({
+              QueueUrl: SQS_URL,
+              Entries: results.map((product, idx) => ({
+                Id: idx.toString(),
+                MessageBody: JSON.stringify(product)
+              }))
+            }).promise();
 
             await s3.copyObject({
               Bucket: BUCKET,

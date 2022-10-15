@@ -13,6 +13,8 @@ provider:
     PRODUCTS_TABLENAME: ${env:PRODUCTS_TABLENAME}
     STOCKS_TABLENAME: ${env:STOCKS_TABLENAME}
     MY_NAMESPACE: ${env:MY_NAMESPACE}
+    SQS_URL:
+      Ref: SQSQueue
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -45,7 +47,7 @@ plugins:
 
 custom:
   autoswagger:
-    host: 'ii9uroeza2.execute-api.eu-west-1.amazonaws.com/dev'
+    host: '2wk3wwe2t4.execute-api.eu-west-1.amazonaws.com/dev'
     typefiles: []
     generateSwaggerOnDeploy: false
   webpack:
@@ -76,6 +78,15 @@ functions:
           path: products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
 
 resources: 
   Resources:
@@ -90,6 +101,10 @@ resources:
           - AttributeName: id
             AttributeType: S
         BillingMode: PAY_PER_REQUEST
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
 
     stocksTable:
       Type: AWS::DynamoDB::Table

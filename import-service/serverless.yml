@@ -12,6 +12,7 @@ provider:
   environment:
     REGION: ${env:REGION}
     BUCKET: ${env:BUCKET}
+    SQS_URL: ${env:SQS_URL}
   iamRoleStatements: 
     - Effect: Allow
       Action: s3:ListBucket
@@ -21,6 +22,10 @@ provider:
       Action: s3:*
       Resource:
         - arn:aws:s3:::${env:BUCKET}/*
+    - Effect: Allow
+      Action: sqs:*
+      Resource:
+        - arn:aws:sqs:${env:REGION}:${env:AMAZON_ID}:${env:CATALOG_ITEMS_QUEUE}
 
 plugins:
   - serverless-webpack

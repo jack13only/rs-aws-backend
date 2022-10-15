@@ -11,10 +11,10 @@ export const validateData = (object) => {
   if (object &&
   typeof object.title === 'string' && 
   object.title.trim().length &&
-  typeof object.price === 'number' &&
+  (typeof object.price === 'number' || typeof +object.price === 'number') &&
   object.price >= 0 &&
   object.price < 1000 &&
-  typeof object.count === 'number' &&
+  (typeof object.count === 'number' || typeof +object.count === 'number') &&
   object.count >= 0 ) {
     return true 
   } else {
