@@ -5,7 +5,7 @@ import { headers } from '../helpers/headers.js'
 import { validateData, createNewProduct } from '../helpers/functions.js'
 
 export const catalogBatchProcess = async (event) => {
-  let count = 0
+  let validProducts = []
   let rim = 'no'
 
   try {
@@ -27,7 +27,8 @@ export const catalogBatchProcess = async (event) => {
           Item: newProductStock
         }).promise()
 
-        count++
+        validProducts.push(product)
+
         if (['rick', 'morty', 'summer'].includes(product.title.toLowerCase())) {
           rim = 'yes'
         }
@@ -35,8 +36,8 @@ export const catalogBatchProcess = async (event) => {
     }
 
     await sns.publish({
-      Subject: `${count} products created!`,
-      Message: JSON.stringify(products),
+      Subject: `${validProducts.length} products created!`,
+      Message: JSON.stringify(validProducts),
       TopicArn: process.env.SNS_ARN,
       MessageAttributes: {
         rim: {
@@ -46,7 +47,7 @@ export const catalogBatchProcess = async (event) => {
     },
     }).promise()
 
-    if (!count) return {
+    if (!validProducts.length) return {
       statusCode: 404,
       headers,
       body: JSON.stringify(`No valid products in this batch!`),
@@ -66,6 +67,6 @@ export const catalogBatchProcess = async (event) => {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify(`${count} products created!`),
+    body: JSON.stringify(`${validProducts.length} products created!`),
   };
 };
