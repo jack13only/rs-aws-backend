@@ -1,14 +1,6 @@
 import mockAWS from 'aws-sdk-mock'
 import { catalogBatchProcess } from './catalogBatchProcess'
 
-// const event = {
-//   Records: [
-//     {
-//       body: '{"title":"Toy4","description":"Toy4","price":"43","count":"11"}',
-//     }
-//   ]
-// }
-
 describe('success catalogBatchProcess lambda', () => {
   it('1 product successfully created (from 1 valid)', async () => {
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')

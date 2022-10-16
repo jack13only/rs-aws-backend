@@ -35,6 +35,12 @@ export const catalogBatchProcess = async (event) => {
       }
     }
 
+    if (!validProducts.length) return {
+      statusCode: 404,
+      headers,
+      body: JSON.stringify(`No valid products in this batch!`),
+    };
+    
     await sns.publish({
       Subject: `${validProducts.length} products created!`,
       Message: JSON.stringify(validProducts),
@@ -46,12 +52,6 @@ export const catalogBatchProcess = async (event) => {
         }
     },
     }).promise()
-
-    if (!validProducts.length) return {
-      statusCode: 404,
-      headers,
-      body: JSON.stringify(`No valid products in this batch!`),
-    };
 
   } catch(err) {
 
