@@ -36,19 +36,15 @@ export const importFileParser = async () => {
           .getObject(paramsGet)
           .createReadStream()
           .pipe(csv())
-          .on('data', async (product) => await sqs.sendMessage({
-            QueueUrl: SQS_URL,
-            MessageBody: JSON.stringify(product)
-          }).promise())
+          .on('data', (product) => results.push(product))
           .on('end', async () => {
 
-          // await sqs.sendMessageBatch({
-          //     QueueUrl: SQS_URL,
-          //     Entries: results.map((product, idx) => ({
-          //       Id: idx.toString(),
-          //       MessageBody: JSON.stringify(product)
-          //     }))
-          //   }).promise();
+            results.forEach((product) => {
+              sqs.sendMessage({
+                  QueueUrl: SQS_URL,
+                  MessageBody: JSON.stringify(product)
+                }).promise()
+            })
 
             await s3.copyObject({
               Bucket: BUCKET,
@@ -72,6 +68,7 @@ export const importFileParser = async () => {
       }
   
       await readFiles(files.Contents);
+      console.log(`--- importFileParser done ---`)
     }
   } catch (err) {
     return {
