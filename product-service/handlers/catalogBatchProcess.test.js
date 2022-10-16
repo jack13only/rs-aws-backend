@@ -1,10 +1,19 @@
 import mockAWS from 'aws-sdk-mock'
 import { catalogBatchProcess } from './catalogBatchProcess'
 
+
 describe('success catalogBatchProcess lambda', () => {  
+
+  beforeEach(() => {
+    mockAWS.restore()
+  });
+
   it('1 product successfully created (from 1 valid)', async () => {
+    const publishMock = jest.fn()
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')
-    mockAWS.mock('SNS', 'publish', '')
+    mockAWS.mock('SNS', 'publish', (params, callback) => {
+      callback(null, publishMock(params));
+    })
 
     const event = {
       Records: [
@@ -16,13 +25,17 @@ describe('success catalogBatchProcess lambda', () => {
 
     const responce = await catalogBatchProcess(event)
 
+    expect(publishMock).toHaveBeenCalledTimes(1);
     expect(responce.body.includes('1 products created!')).toBe(true)
     expect(responce.statusCode).toBe(200)
   })
 
   it('3 product successfully created (from 3 valid)', async () => {
+    const publishMock = jest.fn()
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')
-    mockAWS.mock('SNS', 'publish', '')
+    mockAWS.mock('SNS', 'publish', (params, callback) => {
+      callback(null, publishMock(params));
+    })
 
     const event = {
       Records: [
@@ -40,13 +53,17 @@ describe('success catalogBatchProcess lambda', () => {
 
     const responce = await catalogBatchProcess(event)
 
+    expect(publishMock).toHaveBeenCalledTimes(1);
     expect(responce.body.includes('3 products created!')).toBe(true)
     expect(responce.statusCode).toBe(200)
   })
 
   it('1 product successfully created (from 1 valid and 2 invalid) ', async () => {
+    const publishMock = jest.fn()
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')
-    mockAWS.mock('SNS', 'publish', '')
+    mockAWS.mock('SNS', 'publish', (params, callback) => {
+      callback(null, publishMock(params));
+    })
 
     const event = {
       Records: [
@@ -64,13 +81,17 @@ describe('success catalogBatchProcess lambda', () => {
 
     const responce = await catalogBatchProcess(event)
 
+    expect(publishMock).toHaveBeenCalledTimes(1);
     expect(responce.body.includes('1 products created!')).toBe(true)
     expect(responce.statusCode).toBe(200)
   })
 
   it('0 product successfully created (from 2 invalid) ', async () => {
+    const publishMock = jest.fn()
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')
-    mockAWS.mock('SNS', 'publish', '')
+    mockAWS.mock('SNS', 'publish', (params, callback) => {
+      callback(null, publishMock(params));
+    })
 
     const event = {
       Records: [
@@ -85,6 +106,7 @@ describe('success catalogBatchProcess lambda', () => {
 
     const responce = await catalogBatchProcess(event)
 
+    expect(publishMock).toHaveBeenCalledTimes(0);
     expect(responce.body.includes('No valid products in this batch!')).toBe(true)
     expect(responce.statusCode).toBe(404)
   })
@@ -92,8 +114,11 @@ describe('success catalogBatchProcess lambda', () => {
 
 describe('unsuccess catalogBatchProcess lambda', () => {
   it('wrong event', async () => {
+    const publishMock = jest.fn()
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')
-    mockAWS.mock('SNS', 'publish', '')
+    mockAWS.mock('SNS', 'publish', (params, callback) => {
+      callback(null, publishMock(params));
+    })
 
     const event = {
       Records: [
@@ -105,6 +130,7 @@ describe('unsuccess catalogBatchProcess lambda', () => {
 
     const responce = await catalogBatchProcess(event)
   
+    expect(publishMock).toHaveBeenCalledTimes(0);
     expect(responce.body.includes('Unexpected token u in JSON at position 0')).toBe(true)
     expect(responce.statusCode).toBe(500)
   })
