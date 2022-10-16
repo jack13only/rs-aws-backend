@@ -8,10 +8,11 @@ export const catalogBatchProcess = async (event) => {
   try {
     const products = event.Records.map(({ body }) => JSON.parse(body))
     const dynamo = new AWS.DynamoDB.DocumentClient()
+    const sns = new AWS.SNS({ region: process.env.REGION })
+    console.log('Products', products)
 
     for (const product of products){
-      if (validateData(product)) {
-        console.log('product', product)
+      if (validateData(product)) {        
         const {newProductForSale, newProductStock} = createNewProduct(product)
 
         await dynamo.put({
@@ -25,6 +26,18 @@ export const catalogBatchProcess = async (event) => {
         }).promise()
       }
     }
+
+    await sns.publish({
+      Subject: 'Products created!',
+      Message: JSON.stringify(products),
+      TopicArn: process.env.SNS_ARN,
+      MessageAttributes: {
+        rim: {
+          DataType: 'String',
+          StringValue: products.find((product) => ['rick', 'morty', 'summer'].includes(product.title.toLowerCase())) ? 'yes' : 'no'
+        }
+    },
+    }).promise()
 
   } catch(err) {
     console.log(err)
@@ -40,6 +53,6 @@ export const catalogBatchProcess = async (event) => {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify('catalogBatchProcess!'),
+    body: JSON.stringify('catalogBatchProcess done!'),
   };
 };

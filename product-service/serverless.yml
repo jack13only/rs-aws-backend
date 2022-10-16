@@ -13,8 +13,11 @@ provider:
     PRODUCTS_TABLENAME: ${env:PRODUCTS_TABLENAME}
     STOCKS_TABLENAME: ${env:STOCKS_TABLENAME}
     MY_NAMESPACE: ${env:MY_NAMESPACE}
+    EMAIL: ${env:EMAIL}
     SQS_URL:
       Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -40,6 +43,11 @@ provider:
         Fn::GetAtt:
          - stocksTable
          - Arn
+    - Effect: Allow
+      Action: sns:*
+      Resource:
+        Ref: SNSTopic
+      
 
 plugins:
   - serverless-auto-swagger
@@ -82,11 +90,11 @@ functions:
     handler: handler.catalogBatchProcess
     events:
       - sqs:
-          batchSize: 5
           arn:
             Fn::GetAtt:
               - SQSQueue
               - Arn
+          batchSize: 5
 
 resources: 
   Resources:
@@ -105,6 +113,27 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:EMAIL}
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
+    SNS2Subscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:EMAIL_2}
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic   
+        FilterPolicy:
+          rim: 
+            - 'yes'
 
     stocksTable:
       Type: AWS::DynamoDB::Table
@@ -117,4 +146,3 @@ resources:
           - AttributeName: product_id
             AttributeType: S
         BillingMode: PAY_PER_REQUEST
-
