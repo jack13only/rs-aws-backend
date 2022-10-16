@@ -1,7 +1,7 @@
 import mockAWS from 'aws-sdk-mock'
 import { catalogBatchProcess } from './catalogBatchProcess'
 
-describe('success catalogBatchProcess lambda', () => {
+describe('success catalogBatchProcess lambda', () => {  
   it('1 product successfully created (from 1 valid)', async () => {
     mockAWS.mock('DynamoDB.DocumentClient', 'put', '')
     mockAWS.mock('SNS', 'publish', '')
