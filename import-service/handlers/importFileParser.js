@@ -9,8 +9,9 @@ export const importFileParser = async () => {
   
   const results = [];
   try {
-    const { REGION, BUCKET } = process.env
+    const { REGION, BUCKET, SQS_URL } = process.env
 
+    const sqs = new AWS.SQS();
     const s3 = new AWS.S3({ region: REGION })
 
     const paramsList = {
@@ -24,7 +25,7 @@ export const importFileParser = async () => {
     if (files.Contents.length) {
       const readFile = (file) => new Promise((resolve, reject) => {
         
-        console.log(`--- read file ${file.Key} ---`)
+        console.log(`--- read file ${file.Key} --- `)
 
         const paramsGet = {
           Bucket: BUCKET,
@@ -34,12 +35,20 @@ export const importFileParser = async () => {
         s3
           .getObject(paramsGet)
           .createReadStream()
-          .pipe(csv())
-          .on('data', (data) => results.push(data))
+          .pipe(csv({
+            mapHeaders: ({ header }) => header.trim().toLowerCase()
+          }))
+          .on('data', (product) => results.push(product))
           .on('end', async () => {
 
-            console.log(`--- File content ---`)
-            console.log(results)
+            results.forEach((product) => {
+              sqs.sendMessage({
+                  QueueUrl: SQS_URL,
+                  MessageBody: JSON.stringify(product)
+                }).promise()
+            })
+
+            console.log(results);
 
             await s3.copyObject({
               Bucket: BUCKET,
@@ -63,6 +72,7 @@ export const importFileParser = async () => {
       }
   
       await readFiles(files.Contents);
+      console.log(`--- importFileParser done ---`)
     }
   } catch (err) {
     return {

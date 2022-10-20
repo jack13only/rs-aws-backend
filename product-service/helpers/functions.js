@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
-import { v5 as uuidv5 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export const findCount = (array, id) => {
   const findedItem = array.find((item) => item.product_id === id)
@@ -11,10 +11,12 @@ export const validateData = (object) => {
   if (object &&
   typeof object.title === 'string' && 
   object.title.trim().length &&
-  typeof object.price === 'number' &&
+  (typeof object.price === 'number' || typeof +object.price === 'number') &&
+  object.price !== '' &&
   object.price >= 0 &&
   object.price < 1000 &&
-  typeof object.count === 'number' &&
+  (typeof object.count === 'number' || typeof +object.count === 'number') &&
+  object.count !== '' &&
   object.count >= 0 ) {
     return true 
   } else {
@@ -23,7 +25,7 @@ export const validateData = (object) => {
 }
 
 export const createNewProduct = (object) => {
-  const uuid = uuidv5(object.title, process.env.MY_NAMESPACE)
+  const uuid = uuidv4()
   return {
     newProductForSale: {
       id: uuid,

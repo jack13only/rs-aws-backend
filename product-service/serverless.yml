@@ -13,6 +13,11 @@ provider:
     PRODUCTS_TABLENAME: ${env:PRODUCTS_TABLENAME}
     STOCKS_TABLENAME: ${env:STOCKS_TABLENAME}
     MY_NAMESPACE: ${env:MY_NAMESPACE}
+    EMAIL: ${env:EMAIL}
+    SQS_URL:
+      Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -38,6 +43,11 @@ provider:
         Fn::GetAtt:
          - stocksTable
          - Arn
+    - Effect: Allow
+      Action: sns:*
+      Resource:
+        Ref: SNSTopic
+      
 
 plugins:
   - serverless-auto-swagger
@@ -45,7 +55,7 @@ plugins:
 
 custom:
   autoswagger:
-    host: 'ii9uroeza2.execute-api.eu-west-1.amazonaws.com/dev'
+    host: '2wk3wwe2t4.execute-api.eu-west-1.amazonaws.com/dev'
     typefiles: []
     generateSwaggerOnDeploy: false
   webpack:
@@ -76,6 +86,15 @@ functions:
           path: products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
+          batchSize: 5
 
 resources: 
   Resources:
@@ -90,6 +109,31 @@ resources:
           - AttributeName: id
             AttributeType: S
         BillingMode: PAY_PER_REQUEST
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:EMAIL}
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
+    SNS2Subscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:EMAIL_2}
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic   
+        FilterPolicy:
+          rim: 
+            - 'yes'
 
     stocksTable:
       Type: AWS::DynamoDB::Table
@@ -102,4 +146,3 @@ resources:
           - AttributeName: product_id
             AttributeType: S
         BillingMode: PAY_PER_REQUEST
-
