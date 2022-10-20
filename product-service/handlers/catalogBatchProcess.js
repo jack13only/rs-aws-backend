@@ -5,8 +5,8 @@ import { headers } from '../helpers/headers.js'
 import { validateData, createNewProduct } from '../helpers/functions.js'
 
 export const catalogBatchProcess = async (event) => {
-  let validProducts = []
   let rim = 'no'
+  let validProducts = []
 
   try {
     const products = event.Records.map(({ body }) => JSON.parse(body))
@@ -40,6 +40,8 @@ export const catalogBatchProcess = async (event) => {
       headers,
       body: JSON.stringify(`No valid products in this batch!`),
     };
+
+    console.log(validProducts);
     
     await sns.publish({
       Subject: `${validProducts.length} products created!`,

@@ -25,7 +25,7 @@ export const importFileParser = async () => {
     if (files.Contents.length) {
       const readFile = (file) => new Promise((resolve, reject) => {
         
-        console.log(`--- read file ${file.Key} ---`)
+        console.log(`--- read file ${file.Key} --- `)
 
         const paramsGet = {
           Bucket: BUCKET,
@@ -35,7 +35,9 @@ export const importFileParser = async () => {
         s3
           .getObject(paramsGet)
           .createReadStream()
-          .pipe(csv())
+          .pipe(csv({
+            mapHeaders: ({ header }) => header.trim().toLowerCase()
+          }))
           .on('data', (product) => results.push(product))
           .on('end', async () => {
 
@@ -45,6 +47,8 @@ export const importFileParser = async () => {
                   MessageBody: JSON.stringify(product)
                 }).promise()
             })
+
+            console.log(results);
 
             await s3.copyObject({
               Bucket: BUCKET,

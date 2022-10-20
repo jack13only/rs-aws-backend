@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
-import { v5 as uuidv5 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export const findCount = (array, id) => {
   const findedItem = array.find((item) => item.product_id === id)
@@ -25,7 +25,7 @@ export const validateData = (object) => {
 }
 
 export const createNewProduct = (object) => {
-  const uuid = uuidv5(object.title, process.env.MY_NAMESPACE)
+  const uuid = uuidv4()
   return {
     newProductForSale: {
       id: uuid,
