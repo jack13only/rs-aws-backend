@@ -12,3 +12,22 @@ provider:
   environment:
     REGION: ${env:REGION}
     
+plugins:
+  - serverless-webpack
+
+functions:
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
+  
+# resources:
+#   Resources:
+#     basicAuthorizer:
+#       Type: AWS::Serverless::Function
+#       Properties:
+#         Handler: handler.basicAuthorizer
+#   Outputs:
+#     basicAuthorizer:
+#       Value: 
+#         !GetAtt basicAuthorizer.Arn
+#       Export:
+#         Name: basicAuthorizer
