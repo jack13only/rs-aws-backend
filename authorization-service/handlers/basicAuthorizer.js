@@ -24,7 +24,7 @@ export const basicAuthorizer = async (event) => {
 
     console.log(`name: `, name, `pass: `, pass)
 
-    if (process.env[name] === pass) {
+    if (name && pass && process.env[name] === pass) {
       return {
         principalId: name,
         policyDocument: {
