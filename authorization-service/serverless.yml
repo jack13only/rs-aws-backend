@@ -11,6 +11,7 @@ provider:
   stage: dev
   environment:
     REGION: ${env:REGION}
+    jack13only: ${env:jack13only}
     
 plugins:
   - serverless-webpack
@@ -19,15 +20,10 @@ functions:
   basicAuthorizer:
     handler: handler.basicAuthorizer
   
-# resources:
-#   Resources:
-#     basicAuthorizer:
-#       Type: AWS::Serverless::Function
-#       Properties:
-#         Handler: handler.basicAuthorizer
-#   Outputs:
-#     basicAuthorizer:
-#       Value: 
-#         !GetAtt basicAuthorizer.Arn
-#       Export:
-#         Name: basicAuthorizer
+resources:
+  Outputs:
+    basicAuthorizer:
+      Value: 
+        !GetAtt basicAuthorizer.Arn
+      Export:
+        Name: basicAuthorizer

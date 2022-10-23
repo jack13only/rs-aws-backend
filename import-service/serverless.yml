@@ -13,6 +13,7 @@ provider:
     REGION: ${env:REGION}
     BUCKET: ${env:BUCKET}
     SQS_URL: ${env:SQS_URL}
+    BASIC_AUTHORIZER_ARN: ${env:BASIC_AUTHORIZER_ARN}
   iamRoleStatements: 
     - Effect: Allow
       Action: s3:ListBucket
@@ -64,6 +65,12 @@ functions:
           path: import
           method: get
           cors: true
+          authorizer:
+            arn: ${env:BASIC_AUTHORIZER_ARN}
+            managedExternally: false
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   importFileParser:
     handler: handler.importFileParser
     events:
