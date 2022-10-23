@@ -19,11 +19,3 @@ plugins:
 functions:
   basicAuthorizer:
     handler: handler.basicAuthorizer
-  
-resources:
-  Outputs:
-    basicAuthorizer:
-      Value: 
-        !GetAtt basicAuthorizer.Arn
-      Export:
-        Name: basicAuthorizer

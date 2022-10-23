@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
 import { headers } from '../helpers/headers.js'
-import AWS from 'aws-sdk';
 
 export const basicAuthorizer = async (event) => {
   console.log(`event: `, event)
@@ -57,4 +56,4 @@ export const basicAuthorizer = async (event) => {
       ]
     },
   }
-};
+}
