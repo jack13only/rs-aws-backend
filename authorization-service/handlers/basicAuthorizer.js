@@ -2,19 +2,29 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { headers } from '../helpers/headers.js'
 
-export const basicAuthorizer = async (event) => {
+export const basicAuthorizer = async (event, ctx, callback) => {
   console.log(`event: `, event)
+
+  const generatePolicy = (action, arn, principalId) => {
+    return {
+      principalId: principalId ?? 'user',
+      policyDocument: {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Action: 'execute-api:Invoke',
+            Effect: action,
+            Resource: arn
+          }
+        ]
+      },
+    }
+  }
 
   try {
     const { authorizationToken } = event
     if (!authorizationToken) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({
-          message: err.message
-        }),
-      }
+      callback(null, generatePolicy('Deny', event.methodArn))
     }
     const encodedCreds = authorizationToken.split(' ')[1]
     const buff = Buffer.from(encodedCreds, 'base64')
@@ -25,35 +35,11 @@ export const basicAuthorizer = async (event) => {
     console.log(`name: `, name, `pass: `, pass)
 
     if (name && pass && process.env[name] === pass) {
-      return {
-        principalId: name,
-        policyDocument: {
-          Version: '2012-10-17',
-          Statement: [
-            {
-              Action: 'execute-api:Invoke',
-              Effect: 'Allow',
-              Resource: event.methodArn
-            }
-          ]
-        },
-      }
+      callback(null, generatePolicy('Allow', event.methodArn, name))
     }
-  } catch (err) {
-    console.log(err.message);
+  } catch (error) {
+    console.log('Error', JSON.stringify(error));
   }
 
-  return {
-    principalId: 'Anonimus',
-    policyDocument: {
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Action: 'execute-api:Invoke',
-          Effect: 'Deny',
-          Resource: event.methodArn
-        }
-      ]
-    },
-  }
+  callback(null, generatePolicy('Deny', event.methodArn))
 }
