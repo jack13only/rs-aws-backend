@@ -30,7 +30,7 @@ app.get('/products', async (req, res, next) => {
       res.status(502).send(err.message);
     }
   }
-});
+})
 
 app.get('/products/:id', async (req, res, next) => {
   try {
@@ -38,6 +38,19 @@ app.get('/products/:id', async (req, res, next) => {
     const responce = await fetch(`${process.env.products || ''}/${req.params.id}`)
     const data = await responce.json();
     res.status(responce.status).send(data)
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(502).send(err.message);
+    }
+  }
+});
+
+app.get('/cart', async (req, res, next) => {
+  try {
+    if (!process.env.cart) res.status(502).send('Cannot process request')
+    const aaa = await fetch(process.env.cart || '')
+    const data = await aaa.json()
+    res.status(aaa.status).send(data)
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(502).send(err.message);
