@@ -1,0 +1,21 @@
+service: authorization-service
+
+frameworkVersion: '3'
+	
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: eu-west-1
+  stage: dev
+  environment:
+    REGION: ${env:REGION}
+    jack13only: ${env:jack13only}
+    
+plugins:
+  - serverless-webpack
+
+functions:
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
