@@ -3,6 +3,7 @@ import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import fetch from 'node-fetch';
+import routerProducts from './router/products'
 
 const app = express();
 const port = process.env.PORT || '3000';
@@ -19,31 +20,33 @@ app.use((req, res, next) => {
   next();
 })
 
-app.get('/products', async (req, res) => {
-  try {
-    if (!process.env.products) res.status(502).send('Cannot process request')
-    const responce = await fetch(process.env.products || '')
-    const data = await responce.json()
-    res.status(responce.status).send(data)
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(502).send(err.message);
-    }
-  }
-})
+app.use('/products', routerProducts);
 
-app.get('/products/:id', async (req, res) => {
-  try {
-    if (!process.env.products) res.status(502).send('Cannot process request')
-    const responce = await fetch(`${process.env.products || ''}/${req.params.id}`)
-    const data = await responce.json();
-    res.status(responce.status).send(data)
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(502).send(err.message);
-    }
-  }
-});
+// app.get('/products', async (req, res) => {
+//   try {
+//     if (!process.env.products) res.status(502).send('Cannot process request')
+//     const responce = await fetch(process.env.products || '')
+//     const data = await responce.json()
+//     res.status(responce.status).send(data)
+//   } catch (err: unknown) {
+//     if (err instanceof Error) {
+//       res.status(502).send(err.message);
+//     }
+//   }
+// })
+
+// app.get('/products/:id', async (req, res) => {
+//   try {
+//     if (!process.env.products) res.status(502).send('Cannot process request')
+//     const responce = await fetch(`${process.env.products || ''}/${req.params.id}`)
+//     const data = await responce.json();
+//     res.status(responce.status).send(data)
+//   } catch (err: unknown) {
+//     if (err instanceof Error) {
+//       res.status(502).send(err.message);
+//     }
+//   }
+// });
 
 app.get('/cart', async (req, res) => {
   try {
