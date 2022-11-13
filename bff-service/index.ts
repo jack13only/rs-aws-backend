@@ -49,8 +49,6 @@ app.get('/cart', async (req, res) => {
 })
 
 app.get('/import', async (req, res) => {
-  console.log(JSON.stringify({headers: {'authorization': req.headers['authorization'] || ''}}))
-  console.log(`${process.env.import || ''}?name=${req.query['name']}`)
   try {
     if (!req.query['name']) res.status(502).send('No filename provided')
     if (!process.env.import) res.status(502).send('Cannot process request')
