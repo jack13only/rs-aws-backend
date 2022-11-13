@@ -22,38 +22,25 @@ app.use((req, res, next) => {
 
 app.use('/products', routerProducts);
 
-// app.get('/products', async (req, res) => {
-//   try {
-//     if (!process.env.products) res.status(502).send('Cannot process request')
-//     const responce = await fetch(process.env.products || '')
-//     const data = await responce.json()
-//     res.status(responce.status).send(data)
-//   } catch (err: unknown) {
-//     if (err instanceof Error) {
-//       res.status(502).send(err.message);
-//     }
-//   }
-// })
-
-// app.get('/products/:id', async (req, res) => {
-//   try {
-//     if (!process.env.products) res.status(502).send('Cannot process request')
-//     const responce = await fetch(`${process.env.products || ''}/${req.params.id}`)
-//     const data = await responce.json();
-//     res.status(responce.status).send(data)
-//   } catch (err: unknown) {
-//     if (err instanceof Error) {
-//       res.status(502).send(err.message);
-//     }
-//   }
-// });
+app.get('/check', async (req, res) => {
+  try {
+    if (!process.env.cart) res.status(502).send('Cannot process request')
+    const response = await fetch(process.env.cart || '')
+    const data = await response.json()
+    res.status(response.status).send(data)
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(502).send(err.message);
+    }
+  }
+})
 
 app.get('/cart', async (req, res) => {
   try {
     if (!process.env.cart) res.status(502).send('Cannot process request')
-    const responce = await fetch(process.env.cart || '')
-    const data = await responce.json()
-    res.status(responce.status).send(data)
+    const response = await fetch(`${process.env.cart || ''}/api/profile/cart`)
+    const data = await response.json()
+    res.status(response.status).send(data)
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(502).send(err.message);
@@ -67,12 +54,12 @@ app.get('/import', async (req, res) => {
   try {
     if (!req.query['name']) res.status(502).send('No filename provided')
     if (!process.env.import) res.status(502).send('Cannot process request')
-    const responce = await fetch(`${process.env.import || ''}?name=${req.query['name']}`, {
+    const response = await fetch(`${process.env.import || ''}?name=${req.query['name']}`, {
       method: 'get',
       headers: {'authorization': req.headers['authorization'] || ''}
     })
-    const data = await responce.json()
-    res.status(responce.status).send(data)
+    const data = await response.json()
+    res.status(response.status).send(data)
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(502).send(err.message);
