@@ -3,7 +3,7 @@ import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import fetch from 'node-fetch';
-import routerProducts from './router/products'
+import { routerProducts } from './router/products.js'
 
 const app = express();
 const port = process.env.PORT || '3000';

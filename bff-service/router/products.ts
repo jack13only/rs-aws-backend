@@ -53,4 +53,4 @@ routerProducts.post('/', async (req, res) => {
   }
 })
 
-export default routerProducts
+export { routerProducts }
