@@ -1,0 +1,9 @@
+// docker data
+Dockerfile
+.dockerignore
+// node modules folder
+node_modules
+// logs
+npm-debug.log
+// distribution folder
+dist
