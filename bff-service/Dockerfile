@@ -20,4 +20,4 @@ FROM node:16-alpine As production
 COPY --from=build /docker-app/node_modules ./node_modules
 COPY --from=build /docker-app/dist ./dist
 EXPOSE 3000
-CMD [ "node", "dist/main.js" ]
+CMD [ "node", "dist/index.js" ]
