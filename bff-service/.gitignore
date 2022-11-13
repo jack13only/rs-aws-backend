@@ -1,0 +1,14 @@
+# package directories
+node_modules
+jspm_packages
+.webpack
+
+# Serverless directories
+.serverless
+
+# Environment
+.env
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
