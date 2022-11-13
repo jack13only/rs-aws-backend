@@ -4,6 +4,7 @@ WORKDIR /docker-app
 COPY *.json ./
 RUN npm ci
 COPY . .
+COPY .env ./
 
 # FOR PRODUCTION
 FROM node:18-alpine As build
@@ -11,6 +12,7 @@ WORKDIR /docker-app
 COPY *.json ./
 COPY --from=dev /docker-app/node_modules ./node_modules
 COPY . .
+COPY .env ./
 RUN npm run build
 ENV NODE_ENV prod
 RUN npm ci --only=prod && npm cache clean --force
